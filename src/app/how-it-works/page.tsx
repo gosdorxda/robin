@@ -237,7 +237,7 @@ export default function HowItWorksPage() {
             </p>
             <Link
               href="/draws"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-(--button) px-5 py-2.5 text-sm font-semibold text-(--button-foreground) transition hover:bg-(--button-hover) shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-(--button) px-5 py-2.5 text-sm font-semibold text-(--button-foreground) transition hover:bg-(--button-hover) active:bg-(--button-pressed) shrink-0"
             >
               View draws →
             </Link>

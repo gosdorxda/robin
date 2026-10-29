@@ -104,7 +104,7 @@ export default function EligibilityPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex w-full shrink-0 items-center justify-center gap-1.5 border-t border-(--border) bg-(--button) px-5 py-2.5 text-sm font-medium text-(--button-foreground) transition hover:bg-(--button-hover) disabled:opacity-60 sm:w-auto sm:border-l sm:border-t-0"
+                className="inline-flex w-full shrink-0 items-center justify-center gap-1.5 border-t border-(--border) bg-(--button) px-5 py-2.5 text-sm font-medium text-(--button-foreground) transition hover:bg-(--button-hover) active:bg-(--button-pressed) disabled:opacity-60 sm:w-auto sm:border-l sm:border-t-0"
               >
                 <Icon name="search" className="h-4 w-4" />
                 {loading ? "Checking…" : "Check wallet"}

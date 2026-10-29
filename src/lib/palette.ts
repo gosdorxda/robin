@@ -121,6 +121,117 @@ export const PALETTE_TOKENS: readonly PaletteToken[] = [
   },
 
 
+  // ── Buttons ───────────────────────────────────────────────────────────────
+  /*
+   * These drive `src/app/globals.css` → `--button*`, which is what the app's own
+   * buttons read (`bg-(--button) text-(--button-foreground)`), plus the two
+   * shared hover tokens HeroUI's own buttons resolve.
+   *
+   * Defaults deliberately mirror `accent` / `accent-foreground`: `globals.css`
+   * defines `--button: var(--accent)` as an alias, so an untouched row writes NO
+   * CSS and the buttons keep following Accent automatically. A row only starts
+   * overriding once it differs from the default here — which is why the
+   * "follows Accent" behaviour survives someone editing Accent alone.
+   */
+  {
+    token: "button",
+    label: "Button background",
+    group: "Buttons",
+    light: "#0485f7",
+    dark: "#0485f7",
+    hint: "Fill of the app's primary buttons (Check wallet, View draws, Subscribe). Follows Accent until you change it here.",
+  },
+  {
+    token: "button-hover",
+    label: "Button hover",
+    group: "Buttons",
+    light: "#0072e2",
+    dark: "#2a98ff",
+    hint: "Button fill while the pointer is over it. Dark mode lightens instead of darkening.",
+  },
+  {
+    token: "button-pressed",
+    label: "Button pressed",
+    group: "Buttons",
+    light: "#0072e2",
+    dark: "#2a98ff",
+    hint: "Button fill while it is being clicked.",
+  },
+  {
+    token: "button-foreground",
+    label: "Button text & icon",
+    group: "Buttons",
+    light: "#fcfcfc",
+    dark: "#fcfcfc",
+    hint: "TEXT AND ICONS ON EVERY BUTTON. This is the one to change for button text color — set it once here and all primary buttons follow. Follows Accent foreground until you change it here.",
+  },
+  {
+    token: "accent-hover",
+    label: "Solid button hover (HeroUI)",
+    group: "Buttons",
+    light: "#0072e2",
+    dark: "#2a98ff",
+    hint: "Hover fill of HeroUI's own solid buttons and the active tab underline. Also backs Button hover above.",
+  },
+  {
+    token: "default-hover",
+    label: "Neutral button hover (HeroUI)",
+    group: "Buttons",
+    light: "#dadbdc",
+    dark: "#333435",
+    hint: "Hover fill of HeroUI's neutral/outline buttons (Prev/Next on Draws, admin actions) and dropdown triggers.",
+  },
+
+  // ── Soft chips & badges ───────────────────────────────────────────────────
+  /*
+   * The label color of every `variant="soft"` chip and badge. These tokens were
+   * undefined in the theme until 2026-10-29, which is why soft chips rendered
+   * with no background and inherited text: an undefined custom property inside
+   * `var()` makes the whole declaration invalid, it does not fall back. Editing
+   * them here is what tunes "Eligible", "Skipped", "Failed" pill text.
+   */
+  {
+    token: "accent-soft-foreground",
+    label: "Accent soft text",
+    group: "Soft chips & badges",
+    light: "#005abf",
+    dark: "#75bbff",
+    hint: "Label on soft accent chips and badges.",
+  },
+  {
+    token: "default-soft-foreground",
+    label: "Neutral soft text",
+    group: "Soft chips & badges",
+    light: "#17191b",
+    dark: "#fcfcfc",
+    hint: "Label on neutral soft chips — the most common pill in the app.",
+  },
+  {
+    token: "success-soft-foreground",
+    label: "Success soft text",
+    group: "Soft chips & badges",
+    light: "#006e25",
+    dark: "#5dd480",
+    hint: "Label on soft success chips (completed draws, paid payouts, auto-excluded venue).",
+  },
+  {
+    token: "warning-soft-foreground",
+    label: "Warning soft text",
+    group: "Soft chips & badges",
+    light: "#804500",
+    dark: "#ffbf4c",
+    hint: "Label on soft warning chips (pending payouts, unsaved changes).",
+  },
+  {
+    token: "danger-soft-foreground",
+    label: "Danger soft text",
+    group: "Soft chips & badges",
+    light: "#ce0007",
+    dark: "#ff716c",
+    hint: "Label on soft danger chips (failed payouts, errors).",
+  },
+
+
   // ── Page & surfaces ───────────────────────────────────────────────────────
   {
     token: "background",
@@ -315,6 +426,8 @@ export const PALETTE_TOKENS: readonly PaletteToken[] = [
 /** Group order for the admin panel. */
 export const PALETTE_GROUPS: readonly string[] = [
   "Brand & status",
+  "Buttons",
+  "Soft chips & badges",
   "Page & surfaces",
   "Lines & chrome",
 ];

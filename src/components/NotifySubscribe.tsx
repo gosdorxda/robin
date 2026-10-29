@@ -76,7 +76,7 @@ export function NotifySubscribe() {
               type="button"
               onClick={() => setChannel("email")}
               className={`px-3 py-2 text-sm transition ${
-                channel === "email" ? "bg-(--button) text-(--button-foreground)" : "bg-surface text-muted hover:bg-default/40"
+                channel === "email" ? "bg-(--button) text-(--button-foreground) active:bg-(--button-pressed)" : "bg-surface text-muted hover:bg-default/40"
               }`}
             >
               Email
@@ -85,7 +85,7 @@ export function NotifySubscribe() {
               type="button"
               onClick={() => setChannel("telegram")}
               className={`px-3 py-2 text-sm transition ${
-                channel === "telegram" ? "bg-(--button) text-(--button-foreground)" : "bg-surface text-muted hover:bg-default/40"
+                channel === "telegram" ? "bg-(--button) text-(--button-foreground) active:bg-(--button-pressed)" : "bg-surface text-muted hover:bg-default/40"
               }`}
             >
               Telegram
@@ -109,7 +109,7 @@ export function NotifySubscribe() {
           type="button"
           onClick={submit}
           disabled={busy || !address.trim() || !endpoint.trim()}
-          className="inline-flex items-center gap-1.5 rounded-md bg-(--button) px-5 py-2 text-sm font-semibold text-(--button-foreground) transition hover:bg-(--button-hover) disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-md bg-(--button) px-5 py-2 text-sm font-semibold text-(--button-foreground) transition hover:bg-(--button-hover) active:bg-(--button-pressed) disabled:opacity-50"
         >
           {busy ? "Subscribing…" : "Subscribe"}
         </button>
