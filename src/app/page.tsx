@@ -899,7 +899,7 @@ export default function Home() {
               <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
                 <Link
                   href="/draws"
-                  className="group relative inline-flex h-9 items-center justify-center gap-1.5 overflow-hidden rounded-lg bg-(--button) px-3.5 text-xs font-medium text-(--button-foreground) shadow-sm transition-[background-color,box-shadow,translate] duration-200 hover:-translate-y-px hover:bg-(--button-hover) hover:shadow-md hover:shadow-(--button)/25 active:translate-y-0 active:bg-(--button-pressed) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--button) motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-4"
+                  className="group relative inline-flex h-9 items-center justify-center gap-1.5 overflow-hidden rounded-lg bg-(--button) px-3.5 text-xs font-medium text-(--button-foreground) shadow-sm transition-[background-color,box-shadow,translate] duration-200 hover:-translate-y-px hover:bg-(--button-hover) hover:shadow-md hover:shadow-[color:color-mix(in_oklab,var(--button)_25%,transparent)] active:translate-y-0 active:bg-(--button-pressed) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--button) motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-4"
                 >
                   {/* One-pass sheen — fades in from the left on hover and exits
                       right, clipped by the button's overflow-hidden. Token-based
