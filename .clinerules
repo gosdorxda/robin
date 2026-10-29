@@ -11,7 +11,7 @@ Geist Sans (single typeface — the Geist Mono cut was removed 2026-10-26) · Ty
 
 ## Commands
 - Dev server: `npm run dev`  (next dev --webpack → http://localhost:3000)
-- Type-check — **run after EVERY code edit**: `npx tsc --noEmit`  (expect 0 errors; no dedicated script)
+- Type-check — **run after EVERY code edit**: `npm run typecheck` (expect 0 errors). Jangan `npx tsc --noEmit` polos di VPS: heap default Node ~512 MB < kebutuhan proyek ~813 MB → `FATAL ERROR: Reached heap limit`. Script-nya sudah membawa `--max-old-space-size=2048`.
 - Build: `npm run build` · Lint: `npm run lint`
 - Prisma: `npm run db:generate` | `db:push` | `db:migrate` | `db:studio`
 - Scripts (tsx): `lottery:run`, `holders:sync`, `drand:test`, `wallet:check`, `airdrop`, `setup:devnet`

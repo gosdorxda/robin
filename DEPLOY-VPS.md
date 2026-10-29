@@ -37,6 +37,33 @@ keduanya berebut port 3000 dan menggandakan cron).
 `npm run build` (webpack, Solana SDK + Prisma) adalah bagian paling berat: butuh ±1.5–2 GB RAM
 sesaat. Di VPS 1 GB, build akan dibunuh kernel (`Killed`) kalau tidak ada swap — lihat §2.4.
 
+`npx tsc --noEmit` punya jebakan yang sama tapi **berbeda penyebab**: ini bukan kernel OOM,
+tapi **batas heap default Node**. V8 menentukan `--max-old-space-size` dari RAM yang terlihat —
+di VPS 1–2 GB batas itu jatuh ke **~512 MB**, sementara proyek ini butuh **~813 MB** (puncak
+terukur, cold run tanpa `tsconfig.tsbuildinfo`). Gejalanya:
+
+```
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+... Scavenge 473.5 (486.4) -> 472.0 (486.7) MB
+```
+
+Angka `472 MB` itu tepat di bawah cap 512 MB — jadi jawabannya bukan "VPS kurang kuat",
+tapi heap yang perlu dinaikkan:
+
+```bash
+npm run typecheck        # = node --max-old-space-size=2048 .../typescript/lib/tsc.js --noEmit
+free -h                  # pastikan RAM+swap benar-benar menyediakan ~1 GB
+```
+
+`npm run build` juga menjalankan type-check di proses terpisah, jadi kalau build kena OOM
+dengan pesan heap yang sama:
+
+```bash
+NODE_OPTIONS=--max-old-space-size=2048 npm run build
+```
+
+Jalankan `npx tsc --noEmit` polos hanya kalau RAM bebas > 1 GB; kalau tidak, flag di atas wajib.
+
 Bandwidth keluar masuk kecil (halaman SSR), tapi app butuh akses internet keluar ke:
 Neon (Postgres), RPC Solana/Helius, drand, dan pump.fun API. Jangan pasang firewall keluar
 yang memblokir HTTPS.

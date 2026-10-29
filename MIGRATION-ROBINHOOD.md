@@ -1062,5 +1062,53 @@ BUILD_ID `QW7QxmHGUsBNiVuG1ocHn`) · 0 mojibake/BOM baru di 12 file yang disentu
 dipertahankan) · `GET /`, `/how-it-works`, `/eligibility` **200** · tidak ada verifikasi
 browser (atas permintaan pemilik).
 
+---
+
+## 22. `npx tsc --noEmit` OOM di VPS: bukan mesinnya, tapi heap default Node · **SELESAI 2026-10-29**
+
+**Gejala yang dilaporkan** (dari VPS):
+
+```
+FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+[66519:0x34787000] 35329 ms: Scavenge 473.5 (486.4) -> 472.0 (486.7) MB ... allocation failure;
+```
+
+**Diagnosis.** Angka `473 MB` itu **tepat di bawah ~512 MB** — cap heap default V8, bukan
+batas RAM mesin. V8 menetapkan `--max-old-space-size` dari RAM yang terlihat; di VPS
+1–2 GB cap itu jatuh ke ~512 MB, sementara `tsc` untuk proyek ini butuh lebih.
+
+**Diukur, bukan ditebak** (Windows dev box, cold run tanpa `tsconfig.tsbuildinfo`,
+proses `tsc` di-`Start-Process -PassThru` lalu `PeakWorkingSet64` dipantau):
+
+| konfigurasi | hasil |
+|---|---|
+| `npx tsc --noEmit` | selesai **8,1 s**, puncak **812,7 MB** |
+| `node --max-old-space-size=300 …/tsc.js --noEmit` | **OOM** — `Ineffective mark-compacts near heap limit`, persis mengulang error VPS |
+| `npm run typecheck` (= `--max-old-space-size=2048`) | **0 error**, tanpa OOM, `tsconfig.tsbuildinfo` terbentuk |
+
+Jadi jawabannya **bukan "VPS kurang kuat"**: dev box pun butuh ~813 MB RSS, dan cap 300 MB
+di mesin 24 GB ini tetap OOM. Yang salah cuma batas heap yang diwariskan lingkungan.
+
+**Perbaikan.**
+
+- `package.json`: script baru
+  `"typecheck": "node --max-old-space-size=2048 node_modules/typescript/lib/tsc.js --noEmit"`.
+  Menunjuk `typescript/lib/tsc.js` (bukan `npx tsc`) supaya flag benar-benar sampai ke proses
+  TypeScript, bukan ke pembungkus npx — dan supaya jalan sama di Windows maupun Linux.
+- `DEPLOY-VPS.md` §1: paragraf baru yang menjelaskan beda **kernel OOM (`Killed`) vs heap Node
+  OOM**, angka 472 MB ↔ cap 512 MB, `npm run typecheck`, `free -h`, dan
+  `NODE_OPTIONS=--max-old-space-size=2048 npm run build` untuk type-check di dalam build.
+- `.clinerules` §Commands: perintah type-check harian diganti `npm run typecheck` + alasannya
+  (aturan lama menulis "no dedicated script").
+
+**Yang perlu dilakukan di VPS:** `npm run typecheck` (bukan `npx tsc --noEmit` polos), dan
+pastikan `free -h` menunjukkan ≥ 1 GB tersedia (RAM atau swap — lihat `DEPLOY-VPS.md` §2.4 untuk
+membuat swap 2 GB bila RAM hanya 1 GB). Tidak ada perubahan kode aplikasi.
+
+**Catatan:** `tsconfig.json` sudah `"incremental": true` dan `"skipLibCheck": true`, jadi run
+berikutnya (dengan `tsconfig.tsbuildinfo` ada) jauh lebih murah; yang berat adalah **cold run**
+pertama setelah upload — inilah yang Anda jalankan di VPS. `*.tsbuildinfo` di-`.gitignore`,
+jadi VPS selalu mulai dari cold.
+
 
 
