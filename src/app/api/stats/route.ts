@@ -73,6 +73,20 @@ function windowStartUtc(): Date {
  * threshold. One batch per day (~30 batches) keeps this cheap; every batch would
  * be 288x the rows for no extra information on a 30-day chart.
  *
+ * The threshold goes in as a **string** and is cast with `::numeric`, never as a
+ * `bigint`: `$queryRaw` cannot carry a JS BigInt across to the engine — it
+ * serialises the value as `{ prisma__type: "bigint", … }` and the engine rejects
+ * the whole call with
+ *
+ *   Invalid value for argument `parameters`: Could not convert from
+ *   `JSON bigint value` to `PrismaValue`. Expected Flat JSON array (no nesting).
+ *
+ * so the query failed on every request and this function silently fell back to
+ * the per-draw series (see the `catch` below). A string param plus `::numeric`
+ * compares fine against `amt`, which is `SUM()` over a `numeric(78,0)` column —
+ * and `numeric` is the only type that holds raw 18-decimal balances at all
+ * (int8 tops out at ~9.22e18).
+ *
  * Returns null when the raw query fails (e.g. schema drift) — the page then
  * falls back to the per-draw eligible series instead of showing an error.
  */
@@ -80,7 +94,7 @@ async function loadHolderHistory(
   start: Date
 ): Promise<{ key: string; eligible: number; total: number }[] | null> {
   try {
-    const threshold = await effectiveMinEligibleBigint();
+    const threshold = (await effectiveMinEligibleBigint()).toString();
     const rows = await prisma.$queryRaw<
       { key: string; eligible: number; total: number }[]
     >`
@@ -103,14 +117,20 @@ async function loadHolderHistory(
         GROUP BY c.d, s."holderAddress"
       )
       SELECT to_char(d, 'YYYY-MM-DD') AS key,
-             COUNT(*) FILTER (WHERE amt >= ${threshold})::int AS eligible,
+             COUNT(*) FILTER (WHERE amt >= ${threshold}::numeric)::int AS eligible,
              COUNT(*)::int AS total
       FROM per_wallet
       GROUP BY d
       ORDER BY d
     `;
     return rows;
-  } catch {
+  } catch (err) {
+    // The chart below falls back to the per-draw series, which is why this used
+    // to fail invisibly: the raw query error only appeared in Prisma's own log.
+    console.warn(
+      "[stats] holder history unavailable, falling back to per-draw series:",
+      err instanceof Error ? err.message : String(err)
+    );
     return null;
   }
 }

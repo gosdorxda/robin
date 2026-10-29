@@ -1110,5 +1110,53 @@ berikutnya (dengan `tsconfig.tsbuildinfo` ada) jauh lebih murah; yang berat adal
 pertama setelah upload — inilah yang Anda jalankan di VPS. `*.tsbuildinfo` di-`.gitignore`,
 jadi VPS selalu mulai dari cold.
 
+---
+
+## 23. `prisma:error` di `/api/rounds`: `$queryRaw` tidak bisa membawa parameter `bigint` · **SELESAI 2026-10-29**
+
+**Gejala** (log VPS, tiap request `/api/rounds` — sebenarnya dipicu `/api/stats`):
+
+```
+prisma:error Invalid `prisma.$queryRaw()` invocation:
+Invalid value for argument `parameters`: Could not convert from `JSON bigint value`
+to `PrismaValue`. Expected Flat JSON array (no nesting).
+parameters.values: [{"prisma__type":"date",…},{"prisma__type":"bigint","prisma__value":"1000000000000000000000000"}]
+```
+
+**Sebab.** `src/app/api/stats/route.ts` → `loadHolderHistory()` menulis
+`COUNT(*) FILTER (WHERE amt >= ${threshold})` dengan `threshold` hasil
+`effectiveMinEligibleBigint()` — sebuah **JS `BigInt`**. `$queryRaw` menyerialkan `BigInt`
+sebagai objek `{ prisma__type: "bigint", … }`, dan mesin Prisma menolak seluruh panggilan
+("Expected Flat JSON array (no nesting)"). Jadi query itu **gagal setiap kali**, dan karena
+`loadHolderHistory` punya `catch { return null }` yang sengaja fallback, **tidak ada yang
+terlihat rusak** — hanya error di log Prisma. Efeknya: chart holder di `/stats` selalu pakai
+seri per-draw (`daily`) alih-alih snapshot holder (`holdersDaily`).
+
+**Diukur** (langsung ke Neon, read-only; `src/lib/settings.ts` → `.env`
+`MIN_TOKEN_ELIGIBLE=1000000000000000000000000`):
+
+| bentuk | hasil |
+|---|---|
+| `$queryRaw` dengan param `BigInt` | **ERROR** — pesan identik dengan VPS |
+| param **string** + `${threshold}::numeric` | **OK** — `n=91` |
+| query `daycap` penuh dengan param string | **OK** — `2026-10-29 eligible=24 total=24` |
+
+**Perbaikan.** `threshold` dikirim sebagai **string** dan di-cast `::numeric` di SQL (bukan
+`bigint`) — `numeric` juga satu-satunya tipe yang bisa memuat saldo raw 18-desimal (int8 mentok
+~9.22e18). Ditambah `console.warn` di `catch`, karena kegagalan senyap inilah yang membuat
+masalah ini tidak terlihat sampai log Prisma dibaca.
+
+**Bukti end-to-end:** `/api/stats` → HTTP **200** dan `holdersDaily` kini
+`2026-10-29 eligible=24 total=24` (sebelumnya selalu `null` → chart pakai `daily`); tidak ada
+`prisma:error` baru di `.dev.log`. `npm run typecheck` **0 error**.
+
+**Pelengkap:** sisa pemakaian raw SQL di proyek ini aman —
+`engine.ts` `SELECT pg_advisory_xact_lock(4711001)` memakai **number** biasa, dan
+`instrumentation.ts` `SELECT 1` tanpa parameter.
+
+**Catatan nilai:** `.env` `MIN_TOKEN_ELIGIBLE=1e24` = **1.000.000 token** (18 desimal);
+row DB `MIN_TOKEN_ELIGIBLE` masih `1e18` tapi **tidak dipakai** (engine membaca env — lihat §16).
+
+
 
 

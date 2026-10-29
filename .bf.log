@@ -1,0 +1,11 @@
+
+> pay-lottery@0.1.0 build
+> next build --webpack
+
+▲ Next.js 16.4.2 (webpack)
+- Environments: .env
+✓ Running next.config.mjs took 18ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 6.8s
+  Running TypeScript ...
