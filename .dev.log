@@ -1,0 +1,105 @@
+
+> pay-lottery@0.1.0 dev
+> next dev --webpack
+
+▲ Next.js 16.4.2 (webpack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.18.3:3000
+- Environments: .env
+✓ Ready in 467ms
+✓ Running next.config.mjs took 18ms
+[net] ipv4-first aktif, family auto-selection dimatikan
+[cron] registered — holders="*/5 * * * *", lottery="0 * * * *" (enabled=false), claim="*/10 * * * *", telegram="* * * * * (DB-configured)"
+[cron] [cron] registered — holders="*/5 * * * *", lottery="0 * * * *" (enabled=false), claim="*/10 * * * *", telegram="* * * * * (DB-configured)"
+[db] pool warm (3734 ms)
+
+○ Compiling /treasury/page ...
+ GET /admin 200 in 1484ms (next.js: 184ms, application-code: 1301ms)
+ GET /treasury 200 in 1488ms (next.js: 184ms, application-code: 1304ms)
+ GET /api/admin/me 200 in 897ms (next.js: 492ms, application-code: 405ms)
+ GET /api/admin/me 200 in 898ms (next.js: 492ms, application-code: 406ms)
+ GET /api/buyback 200 in 924ms (next.js: 493ms, application-code: 430ms)
+ GET /api/buyback 200 in 14ms (next.js: 2ms, application-code: 11ms)
+ GET /api/treasury/ledger 200 in 1373ms (next.js: 493ms, application-code: 880ms)
+ GET /api/treasury/ledger 200 in 471ms (next.js: 3ms, application-code: 468ms)
+ GET /api/wallets 200 in 1635ms (next.js: 493ms, application-code: 1142ms)
+ GET /api/admin/logs 200 in 406ms (next.js: 75ms, application-code: 331ms)
+ GET /api/wallets 200 in 3.3s (next.js: 493ms, application-code: 2.8s)
+ GET /api/wallets 200 in 3.3s (next.js: 493ms, application-code: 2.8s)
+ GET /api/rounds 200 in 1128ms (next.js: 74ms, application-code: 1055ms)
+ GET /api/admin/creator-fees 200 in 345ms (next.js: 36ms, application-code: 309ms)
+ GET /api/admin/creator-fees 200 in 345ms (next.js: 36ms, application-code: 309ms)
+ GET /api/rounds 200 in 11ms (next.js: 3ms, application-code: 8ms)
+ GET /api/admin/holders 200 in 1589ms (next.js: 74ms, application-code: 1515ms)
+ GET /api/admin/holders 200 in 201ms (next.js: 5ms, application-code: 196ms)
+ GET /api/admin/logs 200 in 11ms (next.js: 4ms, application-code: 8ms)
+ GET /api/status 200 in 2.6s (next.js: 73ms, application-code: 2.6s)
+ GET /api/status 200 in 1492ms (next.js: 8ms, application-code: 1484ms)
+ GET /api/admin/info 200 in 2.7s (next.js: 73ms, application-code: 2.6s)
+ GET /api/admin/info 200 in 1332ms (next.js: 6ms, application-code: 1326ms)
+ GET /draws 200 in 1715ms (next.js: 153ms, application-code: 1561ms)
+ GET /treasury 200 in 801ms (next.js: 9ms, application-code: 792ms)
+ GET /api/rounds?limit=10&offset=0 200 in 735ms (next.js: 4ms, application-code: 731ms)
+ GET /api/rounds?limit=10&offset=0 200 in 718ms (next.js: 1.2ms, application-code: 717ms)
+ GET /admin 200 in 1548ms (next.js: 17ms, application-code: 1531ms)
+ GET /api/treasury/ledger 200 in 22ms (next.js: 10ms, application-code: 13ms)
+ GET /api/treasury/ledger 200 in 10ms (next.js: 2ms, application-code: 8ms)
+ GET /api/buyback 200 in 88ms (next.js: 7ms, application-code: 81ms)
+ GET /api/buyback 200 in 15ms (next.js: 2ms, application-code: 13ms)
+ GET /api/wallets 200 in 1070ms (next.js: 9ms, application-code: 1061ms)
+ GET /api/wallets 200 in 719ms (next.js: 4ms, application-code: 715ms)
+ GET /api/admin/me 200 in 18ms (next.js: 5ms, application-code: 14ms)
+ GET /api/admin/me 200 in 16ms (next.js: 4ms, application-code: 11ms)
+ GET /api/status 200 in 27ms (next.js: 6ms, application-code: 21ms)
+ GET /api/admin/info 200 in 18ms (next.js: 7ms, application-code: 11ms)
+ GET /api/rounds 200 in 12ms (next.js: 3ms, application-code: 9ms)
+ GET /api/admin/holders 200 in 13ms (next.js: 5ms, application-code: 8ms)
+ GET /api/admin/logs 200 in 11ms (next.js: 4ms, application-code: 7ms)
+ GET /api/admin/creator-fees 200 in 20ms (next.js: 5ms, application-code: 15ms)
+ GET /api/admin/creator-fees 200 in 8ms (next.js: 1.4ms, application-code: 7ms)
+ GET /api/status 200 in 11ms (next.js: 1.5ms, application-code: 9ms)
+ GET /api/admin/info 200 in 10ms (next.js: 3ms, application-code: 8ms)
+ GET /api/rounds 200 in 8ms (next.js: 1.7ms, application-code: 7ms)
+ GET /api/admin/holders 200 in 9ms (next.js: 1.3ms, application-code: 7ms)
+ GET /api/admin/logs 200 in 8ms (next.js: 1.9ms, application-code: 6ms)
+ GET /api/admin/creator-fees 200 in 9ms (next.js: 1.5ms, application-code: 8ms)
+ GET /api/admin/creator-fees 200 in 11ms (next.js: 1.8ms, application-code: 9ms)
+[admin] manual holder sync triggered
+[sync] holder sync started
+ GET /admin 200 in 2.0s (next.js: 730ms, application-code: 1285ms)
+ GET /draws 200 in 1511ms (next.js: 34ms, application-code: 1477ms)
+ GET /treasury 200 in 1607ms (next.js: 69ms, application-code: 1538ms)
+[sync] holder indexer unavailable (indexer HTTP 403 (public instance throttling this host)) — falling back to alchemy_getAssetTransfers
+[sync] holder sync done — 16 of 16 holders in 1 request(s) via alchemy-transfers · 1 venue(s) auto-excluded @ 2026-10-29T12:02:10.057Z
+[admin] manual sync done — 16 holders
+ POST /api/admin/trigger-sync 200 in 10.4s (next.js: 76ms, application-code: 10.3s)
+ GET /api/admin/logs 200 in 18ms (next.js: 6ms, application-code: 11ms)
+ GET /api/admin/creator-fees 200 in 508ms (next.js: 8ms, application-code: 500ms)
+ GET /api/rounds 200 in 740ms (next.js: 10ms, application-code: 731ms)
+ GET /api/admin/info 200 in 1012ms (next.js: 12ms, application-code: 999ms)
+ GET /api/status 200 in 1890ms (next.js: 19ms, application-code: 1871ms)
+ GET /api/admin/holders 200 in 2.6s (next.js: 14ms, application-code: 2.5s)
+ GET /api/status 200 in 11ms (next.js: 1.5ms, application-code: 9ms)
+ GET /treasury 200 in 970ms (next.js: 21ms, application-code: 949ms)
+ GET /draws 200 in 969ms (next.js: 34ms, application-code: 936ms)
+ GET /admin 200 in 1187ms (next.js: 8ms, application-code: 1179ms)
+ GET /api/admin/creator-fees 200 in 7ms (next.js: 1.3ms, application-code: 6ms)
+ GET /admin 200 in 720ms (next.js: 8ms, application-code: 712ms)
+ GET /draws 200 in 966ms (next.js: 33ms, application-code: 933ms)
+ GET /treasury 200 in 994ms (next.js: 20ms, application-code: 974ms)
+ GET /eligibility 200 in 746ms (next.js: 223ms, application-code: 523ms)
+ GET /admin 200 in 1006ms (next.js: 24ms, application-code: 981ms)
+ GET /treasury 200 in 994ms (next.js: 27ms, application-code: 967ms)
+ GET /eligibility 200 in 945ms (next.js: 2ms, application-code: 942ms)
+ GET /admin 200 in 812ms (next.js: 75ms, application-code: 737ms)
+ GET /treasury 200 in 750ms (next.js: 41ms, application-code: 709ms)
+ GET /eligibility 200 in 786ms (next.js: 49ms, application-code: 736ms)
+ GET /api/holders?page=1 200 in 2.3s (next.js: 77ms, application-code: 2.2s)
+ GET /api/holders?page=1 200 in 7ms (next.js: 1.3ms, application-code: 6ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /api/admin/creator-fees 200 in 20ms (next.js: 6ms, application-code: 15ms)
+ GET /treasury 200 in 1031ms (next.js: 1.6ms, application-code: 1030ms)
+ GET /admin 200 in 742ms (next.js: 1.2ms, application-code: 741ms)
+ GET /api/wallets 200 in 895ms (next.js: 33ms, application-code: 862ms)
+ GET /api/eligibility?address=0x0e8641850b51c819a025bb37f4239a0a74bb86e4 400 in 196ms (next.js: 36ms, application-code: 161ms)
+[?25h

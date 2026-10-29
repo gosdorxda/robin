@@ -1,0 +1,170 @@
+// Prisma schema for the Pay Token Lottery backend.
+// Database: PostgreSQL (Neon). Run `npm run db:generate` then `npm run db:push`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Admin-tunable settings (key/value), e.g. minTokenEligible override.
+model AdminSetting {
+  key       String   @id
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// A known token holder (one row per wallet). Snapshots track balance over time.
+///
+/// `chain` exists because the two chains share these tables during the Robinhood
+/// migration (both write on a schedule): without it, "the latest snapshot batch"
+/// is global and the Solana cron buries every EVM test batch within minutes —
+/// exactly the "sync nangkep yang sol" bug found on 2026-10-29.
+model Holder {
+  address   String           @id
+  chain     String           @default("solana")
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  snapshots HolderSnapshot[]
+
+  @@index([address])
+  @@index([chain])
+}
+
+/// Periodic balance snapshot of a holder (raw token units incl. decimals).
+///
+/// `amount` is `Decimal(78,0)` (= Postgres `numeric`), NOT `BigInt`/int8: raw
+/// balances of an 18-decimal token with a 1e9 supply reach 1e27, while int8 tops
+/// out at ~9,2e18. Verified 2026-10-29 — the int8 column rejected a real EVM
+/// balance with "Could not convert argument value … BigInt". Same reason for the
+/// wei columns on LotteryRound/Winner/CreatorFeeClaim.
+model HolderSnapshot {
+  id            BigInt   @id @default(autoincrement())
+  holderAddress String
+  amount        Decimal  @db.Decimal(78, 0)
+  chain         String   @default("solana")
+  capturedAt    DateTime @default(now())
+  holder        Holder   @relation(fields: [holderAddress], references: [address])
+
+  @@index([holderAddress])
+  @@index([capturedAt])
+  @@index([chain, capturedAt])
+}
+
+/// A wallet/account that is permanently kept OUT of the draw even though it
+/// holds the token on-chain — e.g. the pump.fun bonding curve, an AMM/LP pool
+/// authority, a program vault or a treasury wallet. Maintained from
+/// Admin → Exclusions. Removed from the eligible pool BEFORE the drand-seeded
+/// shuffle, so the randomness can never pick it.
+model ExcludedWallet {
+  address   String   @id
+  label     String? // human note, e.g. "pump.fun bonding curve"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/// A single lottery round (runs on a cron schedule).
+model LotteryRound {
+  id                         BigInt    @id @default(autoincrement())
+  roundNumber                Int       @unique
+  status                     String    @default("pending") // pending | drawing | completed | failed
+  prizePoolLamports          Decimal   @default(0) @db.Decimal(78, 0)
+  eligibleCount              Int       @default(0)
+  /// Raw token threshold that was in force for this round (see HolderSnapshot
+  /// note: 18-decimal thresholds exceed int8, hence numeric).
+  minTokenEligible           Decimal   @db.Decimal(78, 0)
+  // Captured-at of the holder-snapshot batch used to derive winners for this
+  // round. Lets anyone re-derive the eligible pool (and thus the winners) for
+  // end-to-end provably-fair verification. Null for rounds recorded before this
+  // field existed (derivation check unavailable for those).
+  eligibleSnapshotCapturedAt DateTime?
+  // The exclusion list actually applied when this round's eligible pool was
+  // built (platform wallet + admin blacklist, deduped). Snapshotted so
+  // /api/rounds/[n] can reproduce the exact pool even after the blacklist is
+  // edited later — otherwise an exclusion added after the fact would silently
+  // change the reproduced winner list and break the fairness check.
+  excludedAddresses          String[] @default([])
+  // drand (League of Entropy) verifiable randomness artifacts (public audit)
+  randomnessValue            String? // hex random value = sha256(BLS signature)
+  randomnessSignature        String? // hex BLS signature — verify vs drand quicknet pubkey
+  randomnessRound            Int? // drand beacon round number
+  randomnessVerified         Boolean   @default(false) // cross-relay consistency check
+  startedAt                  DateTime  @default(now())
+  completedAt                DateTime?
+  error                      String?
+  // Payout transaction (signature) + the on-chain fee the platform wallet paid
+  // for it. Set when the round's winners were paid — either during the draw (if
+  // the pool was > 0) or later via the admin "Pay pending winners" action. Null
+  // when no payout has happened yet (winners still pending) or the round had no
+  // winners.
+  payoutTx                   String?
+  payoutFeeLamports          Decimal?  @db.Decimal(78, 0)
+  // Platform revenue cut taken from the prize pool (lamports) — a % of the pool
+  // kept on the platform wallet (the funder), NOT paid out to winners. Set at
+  // draw time alongside prizePoolLamports. 0 when PLATFORM_FEE_BPS is 0
+  // (default). Null for rounds drawn before this field existed.
+  platformFeeLamports        Decimal?  @db.Decimal(78, 0)
+  winners                    Winner[]
+
+  @@index([status])
+}
+
+/// A winner of a round with their rank and payout.
+model Winner {
+  id             BigInt       @id @default(autoincrement())
+  roundId        BigInt
+  rank           Int // 1 = first (largest share), 2, 3 ...
+  address        String
+  amountLamports Decimal      @db.Decimal(78, 0)
+  payoutTx       String?
+  status         String       @default("pending") // pending | sent | failed
+  createdAt      DateTime     @default(now())
+  round          LotteryRound @relation(fields: [roundId], references: [id])
+
+  @@index([roundId])
+  @@index([address])
+}
+
+/// A user subscription for winner notifications on a wallet address.
+/// `channel` is "email" (endpoint = email address) or "telegram" (endpoint =
+/// numeric chat id). notifyWinners() in lib/notifications.ts fires after each
+/// round completes and dispatches to every subscription whose address won.
+model NotificationSubscription {
+  id        BigInt   @id @default(autoincrement())
+  address   String // wallet address being watched for a win
+  channel   String // "email" | "telegram"
+  endpoint  String // email address OR telegram chat id
+  createdAt DateTime @default(now())
+
+  @@unique([address, channel, endpoint])
+  @@index([address])
+}
+
+/// A pump.fun creator-fee claim (manual from the admin card or automatic via
+/// the cron). Amounts are the *claimable snapshot* taken right before the
+/// claim transaction was built, in lamports — the tx itself only reports a
+/// signature, so this is the source of truth for "how much did we claim".
+/// `recipient` is the on-chain fee recipient reported by pumpdev (a
+/// fee-sharing shareholder when `hasFeeSharing`, otherwise the platform
+/// wallet). Status is pending → confirmed | failed; the row is created before
+/// the tx is sent so a crash mid-flight still leaves a trail.
+model CreatorFeeClaim {
+  id               BigInt    @id @default(autoincrement())
+  signature        String?   @unique
+  amountLamports   Decimal   @db.Decimal(78, 0)
+  pumpLamports     Decimal   @default(0) @db.Decimal(78, 0)
+  pumpSwapLamports Decimal   @default(0) @db.Decimal(78, 0)
+  recipient        String?
+  source           String    @default("manual") // manual | auto
+  status           String    @default("pending") // pending | confirmed | failed
+  error            String?
+  createdAt        DateTime  @default(now())
+  confirmedAt      DateTime?
+
+  @@index([createdAt])
+  @@index([status])
+}

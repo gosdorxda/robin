@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="DrawFi">
+  <title>DrawFi — line monogram</title>
+  <!-- Editorial line monogram: no badge, one die pip where the bowl closes.
+       Reads at 16 px and leaves the page background alone. -->
+  <g fill="none" stroke="#0485f7" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 52 V12 H30 A20 20 0 0 1 30 52 Z" />
+  </g>
+  <circle cx="37.5" cy="32" r="3.1" fill="#0485f7" />
+</svg>

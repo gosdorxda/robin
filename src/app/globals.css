@@ -1,0 +1,460 @@
+@import "tailwindcss";
+@import "@heroui/styles";
+
+/*
+ * Project typography — Geist (Vercel) is the single global typeface.
+ * Geist Sans carries everything: the mono cut was removed on 2026-10-26, so
+ * `--font-mono` deliberately resolves to the same stack. Every `font-mono`
+ * utility left in the codebase (hash/address cells, big SOL figures, rank
+ * badges) therefore renders in Geist Sans — keep using `tabular-nums` where
+ * digits must stay column-aligned. Tailwind v4 reads these tokens, so HeroUI
+ * components follow too. Geist Sans is a variable font, so `font-bold` /
+ * `font-semibold` produce true bold.
+ */
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-sans);
+}
+
+/*
+ * HeroUI Theme Customization
+ * Add this to your global.css after importing @heroui/styles
+ * Only includes variables users need to customize
+ * @see https://heroui.com/docs/react/getting-started/theming
+ */
+
+:root,
+.light,
+.default,
+[data-theme="light"],
+[data-theme="default"] {
+  /* Theme Colors (Light Mode) */
+  --accent: oklch(62.04% 0.1950 253.83);
+  --accent-foreground: oklch(99.11% 0 0);
+  --background: oklch(97.02% 0.0015 253.83);
+  --border: oklch(90.00% 0.0015 253.83);
+  --danger: oklch(65.32% 0.2335 25.74);
+  --danger-foreground: oklch(99.11% 0 0);
+  --default: oklch(94.00% 0.0015 253.83);
+  --default-foreground: oklch(21.03% 0.0059 253.83);
+  --field-background: oklch(100.00% 0.0008 253.83);
+  --field-border: transparent;
+  --field-foreground: oklch(21.03% 0.0015 253.83);
+  --field-placeholder: oklch(55.17% 0.0030 253.83);
+  --focus: oklch(62.04% 0.1950 253.83);
+  --foreground: oklch(21.03% 0.0015 253.83);
+  --muted: oklch(55.17% 0.0030 253.83);
+  /* Sidebar nav glyphs sit one step darker than the `--muted` label (40% vs
+     55% lightness) so the icon reads slightly stronger without going pure
+     black. Not a general-purpose token — nav only. */
+  --nav-icon: oklch(40.00% 0.0015 253.83);
+  --overlay: oklch(100.00% 0.0004 253.83);
+  --overlay-foreground: oklch(21.03% 0.0015 253.83);
+  --scrollbar: oklch(87.10% 0.0015 253.83);
+  --segment: oklch(100.00% 0.0015 253.83);
+  --segment-foreground: oklch(21.03% 0.0015 253.83);
+  --separator: oklch(92.00% 0.0015 253.83);
+  --success: oklch(73.29% 0.1941 150.81);
+  --success-foreground: oklch(21.03% 0.0059 150.81);
+  --surface: oklch(100.00% 0.0008 253.83);
+  --surface-foreground: oklch(21.03% 0.0015 253.83);
+  --surface-secondary: oklch(95.24% 0.0012 253.83);
+  --surface-secondary-foreground: oklch(21.03% 0.0015 253.83);
+  --surface-tertiary: oklch(93.73% 0.0012 253.83);
+  --surface-tertiary-foreground: oklch(21.03% 0.0015 253.83);
+  --warning: oklch(78.19% 0.1590 72.33);
+  --warning-foreground: oklch(21.03% 0.0059 72.33);
+
+  /* ── Button & pill palette ───────────────────────────────────────────────
+     HeroUI resolves its colours through variable pairs, and the second half of
+     every pair was never defined in this theme:
+
+       .button      → --button-bg / --button-bg-hover  (--accent, --accent-hover)
+       .chip--soft  → --chip-bg  / --chip-fg           (--default-soft, …-soft-foreground)
+       .badge--soft → --badge-bg / --badge-fg          (--success-soft, …)
+       solid hover  → --accent-hover, --danger-hover, …
+
+     An undefined custom property is not "inherit" — `background-color:
+     var(--chip-bg)` where `--chip-bg` holds `var(--default-soft)` is invalid at
+     computed-value time, so the declaration is dropped and the pill renders with
+     NO background, while `color: var(--chip-fg)` drops too and the label
+     silently inherits `--foreground`. That is why soft chips and button hovers
+     looked unstyled rather than merely plain.
+
+     The `--button*` trio below is the app-level palette for the plain HTML
+     buttons (there is no HeroUI <Button> on the marketing pages). It is a thin
+     alias over the accent pair, so one edit here re-colours every primary button
+     in the app: `bg-(--button) text-(--button-foreground) hover:bg-(--button-hover)`.
+
+     `--default-soft` deliberately aliases `--default`: a neutral pill sitting on
+     `--surface` is exactly the 94 % grey (light) / 27 % grey (dark) the token was
+     designed as, and it keeps working in both themes without a second value. */
+  --button: var(--accent);
+  --button-hover: var(--accent-hover);
+  --button-pressed: var(--accent-hover);
+  --button-foreground: var(--accent-foreground);
+
+  --accent-hover: oklch(56.00% 0.1950 253.83);
+  --accent-soft: color-mix(in oklab, var(--accent) 12%, transparent);
+  --accent-soft-hover: color-mix(in oklab, var(--accent) 20%, transparent);
+  --accent-soft-foreground: oklch(48.00% 0.1800 253.83);
+
+  --default-hover: oklch(89.00% 0.0015 253.83);
+  --default-soft: var(--default);
+  --default-soft-hover: var(--default-hover);
+  --default-soft-foreground: var(--default-foreground);
+
+  --danger-hover: oklch(58.00% 0.2335 25.74);
+  --danger-soft: color-mix(in oklab, var(--danger) 12%, transparent);
+  --danger-soft-hover: color-mix(in oklab, var(--danger) 20%, transparent);
+  --danger-soft-foreground: oklch(52.00% 0.2335 25.74);
+
+  --success-hover: oklch(65.00% 0.1941 150.81);
+  --success-soft: color-mix(in oklab, var(--success) 14%, transparent);
+  --success-soft-hover: color-mix(in oklab, var(--success) 22%, transparent);
+  --success-soft-foreground: oklch(46.00% 0.1500 150.81);
+
+  --warning-hover: oklch(71.00% 0.1590 72.33);
+  --warning-soft: color-mix(in oklab, var(--warning) 16%, transparent);
+  --warning-soft-hover: color-mix(in oklab, var(--warning) 24%, transparent);
+  --warning-soft-foreground: oklch(45.00% 0.1300 72.33);
+
+  /* Border Radius */
+  --radius: 0.5rem;
+  /* Fields (inputs, selects, textareas) follow the surface radius instead of
+     HeroUI's 1.5× default: a 12 px select next to an 8 px card read as two
+     different design languages. `.rounded-field` resolves this variable. */
+  --field-radius: var(--radius);
+}
+
+.dark,
+[data-theme="dark"] {
+  color-scheme: dark;
+  /* Theme Colors (Dark Mode) */
+  --accent: oklch(62.04% 0.1950 253.83);
+  --accent-foreground: oklch(99.11% 0 0);
+  --background: oklch(12.00% 0.0015 253.83);
+  --border: oklch(28.00% 0.0015 253.83);
+  --danger: oklch(59.40% 0.1973 24.63);
+  --danger-foreground: oklch(99.11% 0 0);
+  --default: oklch(27.40% 0.0015 253.83);
+  --default-foreground: oklch(99.11% 0 0);
+  --field-background: oklch(21.03% 0.0030 253.83);
+  --field-border: transparent;
+  --field-foreground: oklch(99.11% 0.0015 253.83);
+  --field-placeholder: oklch(70.50% 0.0030 253.83);
+  --focus: oklch(62.04% 0.1950 253.83);
+  --foreground: oklch(99.11% 0.0015 253.83);
+  --muted: oklch(70.50% 0.0030 253.83);
+  /* Same relationship in dark mode: the glyph sits one step brighter than the
+     `--muted` label (85% vs 70.5% lightness) instead of jumping to pure white. */
+  --nav-icon: oklch(85.00% 0.0015 253.83);
+  --overlay: oklch(21.03% 0.0030 253.83);
+  --overlay-foreground: oklch(99.11% 0.0015 253.83);
+  --scrollbar: oklch(70.50% 0.0015 253.83);
+  --segment: oklch(39.64% 0.0015 253.83);
+  --segment-foreground: oklch(99.11% 0.0015 253.83);
+  --separator: oklch(25.00% 0.0015 253.83);
+  --success: oklch(73.29% 0.1941 150.81);
+  --success-foreground: oklch(21.03% 0.0059 150.81);
+  --surface: oklch(21.03% 0.0030 253.83);
+  --surface-foreground: oklch(99.11% 0.0015 253.83);
+  --surface-secondary: oklch(25.70% 0.0023 253.83);
+  --surface-secondary-foreground: oklch(99.11% 0.0015 253.83);
+  --surface-tertiary: oklch(27.21% 0.0023 253.83);
+  --surface-tertiary-foreground: oklch(99.11% 0.0015 253.83);
+  --warning: oklch(82.03% 0.1392 76.34);
+  --warning-foreground: oklch(21.03% 0.0059 76.34);
+
+  /* Button & pill palette — dark counterparts of the light block above (same
+     order, same roles). The `--button*` aliases are repeated so this block reads
+     as a complete palette on its own; they resolve to the dark accent pair
+     through `var()`, so there is no value to keep in sync by hand.
+     Hovers move *up* in lightness here (toward the light) and the soft labels are
+     lifted to ~75 % so a tinted pill stays readable on a 21 % surface. */
+  --button: var(--accent);
+  --button-hover: var(--accent-hover);
+  --button-pressed: var(--accent-hover);
+  --button-foreground: var(--accent-foreground);
+
+  --accent-hover: oklch(68.00% 0.1950 253.83);
+  --accent-soft: color-mix(in oklab, var(--accent) 18%, transparent);
+  --accent-soft-hover: color-mix(in oklab, var(--accent) 28%, transparent);
+  --accent-soft-foreground: oklch(78.00% 0.1400 253.83);
+
+  --default-hover: oklch(32.50% 0.0015 253.83);
+  --default-soft: var(--default);
+  --default-soft-hover: var(--default-hover);
+  --default-soft-foreground: var(--default-foreground);
+
+  --danger-hover: oklch(65.00% 0.1973 24.63);
+  --danger-soft: color-mix(in oklab, var(--danger) 18%, transparent);
+  --danger-soft-hover: color-mix(in oklab, var(--danger) 28%, transparent);
+  --danger-soft-foreground: oklch(74.00% 0.1900 24.63);
+
+  --success-hover: oklch(79.00% 0.1941 150.81);
+  --success-soft: color-mix(in oklab, var(--success) 20%, transparent);
+  --success-soft-hover: color-mix(in oklab, var(--success) 30%, transparent);
+  --success-soft-foreground: oklch(78.00% 0.1600 150.81);
+
+  --warning-hover: oklch(86.00% 0.1392 76.34);
+  --warning-soft: color-mix(in oklab, var(--warning) 22%, transparent);
+  --warning-soft-hover: color-mix(in oklab, var(--warning) 32%, transparent);
+  --warning-soft-foreground: oklch(85.00% 0.1500 76.34);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Offset anchor targets so section headings clear the sticky top bar. */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* Align tab panel content flush with the tab list track.
+   HeroUI's .tabs__panel ships with p-2 (0.5rem) side padding that insets
+   panel content ~1rem narrower than the navbar + segmented tab track above
+   it. This unlayered rule overrides the layered default so panel content
+   spans the full track width (matching the navbar). Per-panel top spacing
+   is still controlled via the pt-4 utility on each Tabs.Panel. */
+.tabs__panel {
+  padding-inline: 0;
+}
+
+/* Holders table — HeroUI `variant="secondary"` paints the header <th>
+   (bg-surface-secondary) as a standalone rounded card: first/last column get
+   border-start-*-radius / border-end-*-radius: min(32px, var(--radius-2xl)) ≈ 16px.
+   Inside our 8px (rounded-lg) bordered wrapper the gray curves in at 16px while
+   the wrapper rounds at 8px, leaving a white gap at the corners. Flatten the
+   header radius so the gray fills the box; `overflow-hidden` on the wrapper then
+   clips it to rounded-lg. Unlayered → beats HeroUI's layered default (same as
+   the .tabs__panel override above). */
+.table-bordered .table__column {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+/* Compact table — for small side tables nested inside a card (the treasury
+   wallet ledgers and the buyback ledger). HeroUI's .table__cell is a layered rule
+   that hard-codes font-size: var(--text-sm) + padding 1rem/0.75rem, so a
+   `text-xs` className on <TableContent> never reaches the cells. These unlayered
+   rules win over the layered default (same trick as .table-bordered above). Two
+   deliberate deltas from the /eligibility table: values run one step denser
+   (12px, with 8px row padding instead of 12px) because these are read-only
+   analytics tucked into half-width cards, and the outer columns keep 1.25rem so
+   the first/last cell lines up with the card's px-5 header instead of bleeding
+   past it. Keep .table-compact off full-width tables — 12px is too dense there. */
+.table-compact .table__cell {
+  padding-inline: 0.75rem;
+  padding-block: 0.5rem;
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}
+
+.table-compact .table__cell:first-child {
+  padding-inline-start: 1.25rem;
+}
+
+.table-compact .table__cell:last-child {
+  padding-inline-end: 1.25rem;
+}
+
+.table-compact .table__column {
+  padding-inline: 0.75rem;
+  padding-block: 0.5rem;
+}
+
+.table-compact .table__column:first-child {
+  padding-inline-start: 1.25rem;
+}
+
+.table-compact .table__column:last-child {
+  padding-inline-end: 1.25rem;
+}
+
+/* HeroUI draws a 1px vertical tick after every header column (`.table__column::after`,
+   16px tall, --separator). On these three-column ledgers it puts a `|` between
+   AMOUNT and TX that reads like a spreadsheet column border. The tables live in a
+   card whose own hairline already separates header from rows, so drop the ticks
+   here. Scoped to .table-compact, which only the treasury cards use — the wide
+   /holders and /stats tables keep theirs. */
+.table-compact .table__column::after {
+  content: none;
+}
+
+
+/* Prize-pool card — slow accent→warning sheen drifting across the widest tile of
+   the live strip. Two token-based radial gradients (color-mix on --accent /
+   --warning) keep the card legible in both themes — no raw hex colors, so the
+   light/dark toggle keeps working. Animating `background-position` moves the
+   gradient inside the card without touching layout. */
+@keyframes pool-sheen-drift {
+  0% {
+    background-position: 0% 50%, 100% 50%;
+    opacity: 0.65;
+  }
+  50% {
+    background-position: 100% 50%, 0% 50%;
+    opacity: 0.95;
+  }
+  100% {
+    background-position: 0% 50%, 100% 50%;
+    opacity: 0.65;
+  }
+}
+
+.pool-sheen {
+  background-image:
+    radial-gradient(
+      60% 110% at 12% 0%,
+      color-mix(in oklab, var(--accent) 20%, transparent) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      55% 100% at 92% 100%,
+      color-mix(in oklab, var(--warning) 16%, transparent) 0%,
+      transparent 66%
+    );
+  background-size: 180% 180%, 160% 160%;
+  background-repeat: no-repeat;
+  animation: pool-sheen-drift 14s ease-in-out infinite;
+}
+
+/* Coin art beside the balance — a calm 6s bob, not a loop that fights the text. */
+@keyframes pool-coin-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(2deg);
+  }
+}
+
+.pool-coin-float {
+  animation: pool-coin-float 6s ease-in-out infinite;
+}
+
+/* HeroUI's select dropdown ships `border-radius: min(32px, var(--radius-3xl))`
+   (~24 px). The field that opens it is now --radius (8 px), so the panel follows
+   the same corner scale as every card on the site instead of looking like a
+   pill floating above a rounded rectangle. */
+.select__popover {
+  border-radius: var(--radius);
+}
+
+/* Podium bars in the prize-split tile — a thin light sweep that travels along
+   the gold fill every few seconds so the 1st-place bar reads as "live metal".
+   The overlay sits inside the fill (which already clips via the track), so it
+   can never overflow the bar or touch layout. Reduced-motion users get the
+   static gradient only. */
+@keyframes split-shine-sweep {
+  0% {
+    transform: translateX(-130%);
+  }
+  55%,
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+.split-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: linear-gradient(
+    100deg,
+    transparent 25%,
+    rgb(255 255 255 / 0.55) 50%,
+    transparent 75%
+  );
+  transform: translateX(-130%);
+  animation: split-shine-sweep 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .split-shine::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Mobile drawer — the panel itself slides via Tailwind transitions; the links
+   inside ride in with a short stagger so the drawer reads as an opening menu
+   rather than a block of text snapping sideways. Applied only below lg (where
+   the sidebar is a drawer) and switched off for reduced-motion users. */
+@keyframes drawer-item-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .drawer-item-in {
+    animation: drawer-item-in 280ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drawer-item-in {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pool-sheen,
+  .pool-coin-float {
+    animation: none;
+  }
+}
+
+/* Admin → Palette — native <input type="color"> trimmed to a swatch that lines
+   up with the token border radius in both themes. Without this the browser
+   keeps its own padding/inset, which shows as a white rim on dark surfaces. */
+.palette-swatch {
+  appearance: none;
+  -webkit-appearance: none;
+  inline-size: 2rem;
+  block-size: 2rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: pointer;
+}
+
+.palette-swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.palette-swatch::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius) - 1px);
+}
+
+.palette-swatch::-moz-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius) - 1px);
+}
+
+.palette-swatch:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+

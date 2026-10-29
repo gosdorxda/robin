@@ -1,0 +1,31 @@
+# Pay Lottery — Project Rules
+
+> Auto-loaded by Cline at session start. Stable conventions only.
+> Current work state lives in **PROJECT_CONTEXT.md** — read it first.
+
+## Stack
+Next.js 16 (App Router, webpack) · React 19 · HeroUI v3 (@heroui/react) ·
+Tailwind CSS v4 · Prisma 6 + PostgreSQL (Neon) · Solana web3.js v1.99 + spl-token +
+wallet-adapter (Phantom) · drand (cross-relay randomness) · framer-motion ·
+Geist Sans (single typeface — the Geist Mono cut was removed 2026-10-26) · TypeScript 5.6 (strict).
+
+## Commands
+- Dev server: `npm run dev`  (next dev --webpack → http://localhost:3000)
+- Type-check — **run after EVERY code edit**: `npx tsc --noEmit`  (expect 0 errors; no dedicated script)
+- Build: `npm run build` · Lint: `npm run lint`
+- Prisma: `npm run db:generate` | `db:push` | `db:migrate` | `db:studio`
+- Scripts (tsx): `lottery:run`, `holders:sync`, `drand:test`, `wallet:check`, `airdrop`, `setup:devnet`
+
+## Code style
+- **UI = HeroUI v3 semantic tokens** (verified against the compiled CSS): `bg-surface`, `bg-surface-secondary`, `bg-default`, `bg-default/40`, `text-foreground`, `text-muted`, `text-muted/40`, `text-accent`, `text-success`, `border` + `border-(--border)`, `rounded-lg`, `Chip color="success"|"warning" variant="soft"`. **There is no numeric `default-*` scale in this theme** — `text-default-400`, `border-default-200`, `bg-default-100`, `hover:bg-default-50/60`, `text-primary` all compile to nothing (no `--color-default-400` / `--color-primary`), so they silently inherit `--foreground`. Secondary text → `text-muted`; hairlines/card frames → `border-(--border)`; row hover → `hover:bg-default/40`. The app has a light/dark toggle (`src/lib/use-theme.ts`) — do NOT use raw dark Tailwind colors (`bg-zinc-900`, `text-emerald-300`, …) that ignore the theme tokens. They look out of place.
+- **Hash / code values** get a subtle gray inline-code bg: `rounded-md bg-default px-2.5 py-1.5 font-mono text-xs break-all`. Never a black terminal block. Since 2026-10-26 **`font-mono` is an inert alias of Geist Sans** (`--font-mono: var(--font-sans)` in `globals.css`) — it no longer changes the typeface, so reach for `tabular-nums` when digits must stay aligned. Do not import `geist/font/mono` again.
+- **Winner ranks**: podium badges via `rankBadge(rank)` helper (gold #1 + 🏆, silver #2, bronze #3, neutral #4+).
+- **Explorer links**: `explorer(addr, "address"|"tx", net)` from `@/lib/format`; `shortAddress(addr)` for display.
+- **Outbound links**: `ExternalLink` from `@/components/ui` (muted, `underline decoration-(--border)`, `arrow-up-right` glyph; `tone="foreground"` when the link sits inside muted prose). Never `text-accent`/blue for links and never `Icon name="external"` — accent is blue in this theme.
+- **Verify flow**: `VerifyButton` (in DrawsList.tsx) does 2 checks — (1) beacon match via drand, (2) `reproduceWinners()` from `@/lib/lottery/verify` re-runs the Fisher–Yates shuffle in-browser (Web Crypto) and compares rank-for-rank with stored winners.
+- **Motions**: anything that slides (drawer, sheet) transitions **`translate`**, not `transform` — Tailwind v4 compiles `translate-x-*` to the CSS `translate` property, so use `transition-[width,translate]` (+ `will-change-[width,translate]`); `transition-[…,transform]` silently does nothing. Add `motion-reduce:transition-none`, and keep keyframes in `globals.css` behind a `prefers-reduced-motion` guard (see `drawer-item-in`).
+- Use **absolute paths** in tool calls.
+- **Encoding:** all source files are **UTF-8** (they contain `—` `…` `→` `●` and emoji like 🪙 🎲 🏆; a few legacy files still carry a BOM). **Never** rewrite a source file with PowerShell `Get-Content` + `Set-Content`/`WriteAllLines` — PS 5.1 reads a **BOM-less** file as ANSI (cp1252), so a round trip silently turns `—` into `â€”` and 🪙 into `ðŸª™`. Use the editor tool for edits; if a shell edit is unavoidable, read/write with explicit UTF-8 (`[System.IO.File]::ReadAllText($p,[Text.Encoding]::UTF8)` / `WriteAllText(..., New-Object Text.UTF8Encoding($false))`) and check for `â€` / `ðŸ` afterwards. Repair tip if it happens: reverse the double-encode byte-by-byte (UTF-8 text → cp1252 byte map → UTF-8), do not retype.
+
+## Session start
+**Read `PROJECT_CONTEXT.md` first** for the file map, current work state, what's done / in-progress / pending, and resume steps.

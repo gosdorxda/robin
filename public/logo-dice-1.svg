@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="DrawFi">
+  <title>DrawFi — die 1</title>
+  <!-- Lockup: solid D on the left, a real 3×3 die face on the right, so every pip
+       sits on the badge and the die layout stays honest for 1–6. -->
+  <defs>
+    <linearGradient id="dg1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3d97ff" />
+      <stop offset="1" stop-color="#0455c8" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#dg1)" />
+  <rect x="1" y="1" width="62" height="62" rx="14" fill="none" stroke="#ffffff" stroke-opacity="0.12" />
+  <path fill="#ffffff" fill-rule="evenodd" d="M9 14 H18 A18 18 0 0 1 18 50 H9 Z M16 20.5 H18 A11.5 11.5 0 0 1 18 43.5 H16 Z" />
+  <g fill="#ffffff" fill-opacity="0.92">
+    <circle cx="50" cy="32" r="2" />
+  </g>
+</svg>

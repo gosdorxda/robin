@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="DrawFi">
+  <title>DrawFi — tone-on-tone pips</title>
+  <!-- Refined take on the badge: deeper two-stop gradient, hairline inner rim,
+       and pips in a tint of the badge instead of pure white — the dice detail
+       is there when you look, quiet when you don't. -->
+  <defs>
+    <linearGradient id="badgeTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3d97ff" />
+      <stop offset="1" stop-color="#0455c8" />
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="16" fill="url(#badgeTone)" />
+  <rect x="1" y="1" width="62" height="62" rx="15" fill="none" stroke="#ffffff" stroke-opacity="0.14" />
+
+  <path
+    fill="#ffffff"
+    fill-rule="evenodd"
+    d="M17 15 H31 A17 17 0 0 1 31 49 H17 Z
+       M24.5 21.5 H31 A10.5 10.5 0 0 1 31 42.5 H24.5 Z"
+  />
+
+  <g fill="#dbeafe">
+    <circle cx="32" cy="27.5" r="1.9" />
+    <circle cx="34.6" cy="32" r="1.9" />
+    <circle cx="37.2" cy="36.5" r="1.9" />
+  </g>
+</svg>

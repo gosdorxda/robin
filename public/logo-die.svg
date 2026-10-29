@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="DrawFi">
+  <title>DrawFi — engraved die</title>
+  <!-- Night badge with a thin accent rim; the D keeps its full counter so the
+       three pips read as engraved dots rather than stickers. Quiet, technical. -->
+  <rect width="64" height="64" rx="16" fill="#0b1220" />
+  <rect x="1" y="1" width="62" height="62" rx="15" fill="none" stroke="#2b8cff" stroke-opacity="0.55" stroke-width="1.5" />
+
+  <path
+    fill="#ffffff"
+    fill-rule="evenodd"
+    d="M17 15 H31 A17 17 0 0 1 31 49 H17 Z
+       M24.5 21.5 H31 A10.5 10.5 0 0 1 31 42.5 H24.5 Z"
+  />
+
+  <g fill="#8fc3ff">
+    <circle cx="32" cy="27.5" r="1.9" />
+    <circle cx="34.6" cy="32" r="1.9" />
+    <circle cx="37.2" cy="36.5" r="1.9" />
+  </g>
+</svg>
