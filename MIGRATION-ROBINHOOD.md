@@ -1157,6 +1157,67 @@ masalah ini tidak terlihat sampai log Prisma dibaca.
 **Catatan nilai:** `.env` `MIN_TOKEN_ELIGIBLE=1e24` = **1.000.000 token** (18 desimal);
 row DB `MIN_TOKEN_ELIGIBLE` masih `1e18` tapi **tidak dipakai** (engine membaca env — lihat §16).
 
+---
+
+## 24. Admin → Palette tidak punya grup "Buttons": token `--button*` tidak terdaftar · **SELESAI 2026-10-29**
+
+**Laporan pemilik:** *"gaada block button di admin"*. Setelah ditelusuri, panel paletnya
+**ada dan lengkap** — `src/lib/palette.ts` (`PALETTE_TOKENS`/`PALETTE_GROUPS`), API
+`/api/admin/palette`, komponen `PalettePanel.tsx`, dan injeksi `<style id="theme-palette">`
+di `layout.tsx` dengan selector `html[data-theme="…"]` (specificity 0,1,1 > `globals.css`
+0,1,0). Yang kurang: **katalognya belum punya grup tombol**, karena `--button*` baru ada
+sejak §21 sedangkan katalognya lebih tua.
+
+**Yang ditambahkan ke `PALETTE_TOKENS`:**
+
+- Grup **`Buttons`** (6 token): `button`, `button-hover`, `button-pressed`,
+  **`button-foreground`** ← *warna teks tombol yang diminta*, `accent-hover`,
+  `default-hover`.
+- Grup **`Soft chips & badges`** (5 token): `accent-soft-foreground`,
+  `default-soft-foreground`, `success-soft-foreground`, `warning-soft-foreground`,
+  `danger-soft-foreground` — label chip soft yang tadinya tak terdefinisi (§21.3).
+- `PALETTE_GROUPS` → `Brand & status · **Buttons** · **Soft chips & badges** · Page & surfaces · Lines & chrome`.
+  Katalog jadi **42 token / 5 grup** (sebelumnya 31 / 3).
+
+**Hex default dihitung, bukan dikira-kira.** Saya tulis konverter oklch→sRGB dan
+memvalidasinya dengan token yang sudah ada: konversinya mereproduksi hex panel **persis**
+(`accent` #0485f7, `accent-foreground` #fcfcfc, `default` #eaebec / #272728,
+`default-foreground` #17191b / #fcfcfc). Jadi token baru memakai hex yang identik dengan
+nilai `globals.css`-nya:
+
+| token | light | dark | dari CSS |
+|---|---|---|---|
+| `button` | #0485f7 | #0485f7 | `var(--accent)` |
+| `button-hover` / `button-pressed` / `accent-hover` | #0072e2 | #2a98ff | `oklch(56% / 68% …)` |
+| `button-foreground` | #fcfcfc | #fcfcfc | `var(--accent-foreground)` |
+| `default-hover` | #dadbdc | #333435 | `oklch(89% / 32.5% …)` |
+| `accent-soft-foreground` | #005abf | #75bbff | |
+| `default-soft-foreground` | #17191b | #fcfcfc | `var(--default-foreground)` |
+| `success-soft-foreground` | #006e25 | #5dd480 | |
+| `warning-soft-foreground` | #804500 | #ffbf4c | |
+| `danger-soft-foreground` | #ce0007 | #ff716c | |
+
+**Perilaku alias tetap terjaga.** `globals.css` mendefinisikan `--button: var(--accent)`;
+`diffPalette()` menyimpan **hanya nilai yang berbeda dari default**, jadi baris yang tidak
+disentuh **tidak menulis CSS apa pun** dan tombol tetap mengikuti Accent. Mengubah Accent
+saja tetap menggerakkan warna tombol — override baru muncul kalau tombol memang mau beda.
+
+**Bonus: `--button-pressed` jadi nyata.** Token itu sebelumnya ada tapi tak dipakai siapa pun;
+sekarang 5 tombol punya `active:bg-(--button-pressed)` (stopkontak tekan) sehingga tidak ada
+knob mati di panel.
+
+**Bukti:**
+
+- Dump katalog via tsx: `grup: Brand & status | Buttons | Soft chips & badges | Page & surfaces | Lines & chrome`, `total token: 42`, `[Buttons] 6 token` dengan `button-foreground #fcfcfc / #fcfcfc`, dan `default-terdaftar=true` untuk semuanya.
+- CSS terkompilasi: `.active\:bg-\(--button-pressed\):active{background-color:var(--button-pressed)}` ada; `color:var(--button-foreground)` dan `background-color:var(--button-hover)` juga.
+- `npm run typecheck` **0 error** · `npm run build` **✓ 10,8 s · TS 5,1 s · 12/12 · 0 warning** (BUILD_ID `9_FYBAx6xogFBeiXs_zxL`).
+- Simpan dari panel langsung tersiar: `POST /api/admin/palette` → `revalidatePath("/", "layout")`
+  (dan `DELETE` yang sama untuk reset) — **tanpa** rebuild atau restart.
+
+**Cara pakai:** Admin → tab **Palette** → pilih **Light theme** / **Dark theme** → grup
+**Buttons** → baris **"Button text & icon"**.
+
+
 
 
 

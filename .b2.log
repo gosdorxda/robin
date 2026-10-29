@@ -1,0 +1,70 @@
+
+> pay-lottery@0.1.0 build
+> next build --webpack
+
+▲ Next.js 16.4.2 (webpack)
+- Environments: .env
+✓ Running next.config.mjs took 22ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 12.0s
+  Running TypeScript ...
+  Finished TypeScript in 11.3s ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/12) ...
+  Generating static pages using 11 workers (3/12) 
+  Generating static pages using 11 workers (6/12) 
+  Generating static pages using 11 workers (9/12) 
+✓ Generating static pages using 11 workers (12/12) in 5.9s
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)                        Revalidate  Expire
+┌ ○ /                                      5m      1y
+├ ○ /_not-found                            5m      1y
+├ ○ /admin                                 5m      1y
+├ ƒ /api/admin/cache
+├ ƒ /api/admin/creator-fees
+├ ƒ /api/admin/creator-fees/auto
+├ ƒ /api/admin/creator-fees/claim
+├ ƒ /api/admin/exclusions
+├ ƒ /api/admin/font
+├ ƒ /api/admin/holders
+├ ƒ /api/admin/info
+├ ƒ /api/admin/login
+├ ƒ /api/admin/logout
+├ ƒ /api/admin/logs
+├ ƒ /api/admin/me
+├ ƒ /api/admin/palette
+├ ƒ /api/admin/reset-data
+├ ƒ /api/admin/seo
+├ ƒ /api/admin/settings
+├ ƒ /api/admin/telegram
+├ ƒ /api/admin/trigger-draw
+├ ƒ /api/admin/trigger-sync
+├ ƒ /api/buyback
+├ ƒ /api/creator-fees
+├ ƒ /api/eligibility
+├ ƒ /api/favicon
+├ ƒ /api/holders
+├ ƒ /api/notifications/subscribe
+├ ƒ /api/rounds
+├ ƒ /api/rounds/[roundNumber]
+├ ƒ /api/stats
+├ ƒ /api/status
+├ ƒ /api/treasury/ledger
+├ ƒ /api/wallets
+├ ○ /draws                                 5m      1y
+├ ○ /eligibility                           5m      1y
+├ ○ /holders                               5m      1y
+├ ○ /how-it-works                          5m      1y
+├ ○ /live                                  5m      1y
+├ ƒ /rounds/[roundNumber]
+├ ○ /stats                                 5m      1y
+├ ○ /treasury                              5m      1y
+└ ○ /verify                                5m      1y
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

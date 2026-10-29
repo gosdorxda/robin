@@ -51,7 +51,7 @@ export default function RouteError({
         <button
           type="button"
           onClick={() => reset()}
-          className="rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground transition hover:opacity-90"
+          className="rounded-md bg-(--button) px-3 py-1.5 text-xs font-medium text-(--button-foreground) transition hover:bg-(--button-hover) active:bg-(--button-pressed)"
         >
           Try again
         </button>

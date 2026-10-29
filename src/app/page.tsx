@@ -887,22 +887,27 @@ export default function Home() {
                   right-stepping arrow on the primary, and a filled secondary so
                   it doesn't dissolve into the hero surface. Both ride the
                   `translate` property (what Tailwind v4 compiles `translate-*`
-                  to), lift 1 px on hover, and have an explicit accent focus
-                  outline for keyboard users. Inline at every width — the pair
-                  sits side by side on phones too (full-width stacking made the
-                  hero read like a form), and `flex-wrap` only kicks in if the
-                  trailing drand.sh link runs out of room. */}
+                  to), lift 1 px on hover, and have an explicit focus outline for
+                  keyboard users. The primary one reads the **button palette**
+                  (`--button*`, Admin → Palette → Buttons) so its fill, hover,
+                  press and text color are editable without a code change; only
+                  the secondary ghost button stays on the neutral tokens. Inline
+                  at every width — the pair sits side by side on phones too
+                  (full-width stacking made the hero read like a form), and
+                  `flex-wrap` only kicks in if the trailing drand.sh link runs
+                  out of room. */}
               <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
                 <Link
                   href="/draws"
-                  className="group relative inline-flex h-9 items-center justify-center gap-1.5 overflow-hidden rounded-lg bg-accent px-3.5 text-xs font-medium text-accent-foreground shadow-sm transition-[background-color,box-shadow,translate] duration-200 hover:-translate-y-px hover:shadow-md hover:shadow-accent/25 active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-4"
+                  className="group relative inline-flex h-9 items-center justify-center gap-1.5 overflow-hidden rounded-lg bg-(--button) px-3.5 text-xs font-medium text-(--button-foreground) shadow-sm transition-[background-color,box-shadow,translate] duration-200 hover:-translate-y-px hover:bg-(--button-hover) hover:shadow-md hover:shadow-(--button)/25 active:translate-y-0 active:bg-(--button-pressed) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--button) motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:px-4"
                 >
                   {/* One-pass sheen — fades in from the left on hover and exits
                       right, clipped by the button's overflow-hidden. Token-based
-                      (`--accent-foreground` is white in both themes). */}
+                      (follows the button text color, which is white by default
+                      in both themes). */}
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-accent-foreground/25 to-transparent transition-[translate] duration-700 ease-out group-hover:translate-x-full motion-reduce:hidden"
+                    className="pointer-events-none absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-(--button-foreground)/25 to-transparent transition-[translate] duration-700 ease-out group-hover:translate-x-full motion-reduce:hidden"
                   />
                   <span className="relative">View draws</span>
                   <Icon
